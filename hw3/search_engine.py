@@ -254,6 +254,9 @@ class CampusSearchEngine:
             self.graph_outgoing[doc.doc_id] = set(doc.links)
             self.pagerank[doc.doc_id] = doc.pagerank
 
+        # Keep save/load workflow query-ready by restoring the inverted index.
+        self.build_inverted_index()
+
     # --------------------- Internal utils ---------------------
     def _safe_get(self, url: str) -> str:
         try:
@@ -403,10 +406,15 @@ def _main() -> None:
     engine.save_json(output_json_path)
     print(f"[完成] JSON 已輸出到: {output_json_path}")
     engine.print_query_results(query_text, top_k=top_k)
+
+    print("[附加] 查詢評估 (Precision / Recall)")
     if relevant_doc_ids:
         metrics = engine.evaluate_query(query_text, relevant_doc_ids=relevant_doc_ids, top_k=top_k)
         print(f"Precision : {metrics['precision']:.2%}")
         print(f"Recall : {metrics['recall']:.2%}")
+    else:
+        print("Precision : N/A（尚未提供 relevant_doc_ids，無法計算）")
+        print("Recall : N/A（尚未提供 relevant_doc_ids，無法計算）")
 
 
 if __name__ == "__main__":

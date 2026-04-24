@@ -32,7 +32,9 @@ python hw3/search_engine.py
 - 計算 PageRank
 - 輸出 JSON
 - 立即查詢並印出結果
-- （若在程式中的 `relevant_doc_ids` 填入標註集合）印出 Precision / Recall
+- 印出 Precision / Recall 區塊
+  - 若 `relevant_doc_ids` 有填：輸出實際百分比
+  - 若 `relevant_doc_ids` 為空：輸出 `N/A` 並提示未提供標註資料
 
 參數（`seed_urls`, `max_docs`, `query_text`, `top_k`, `output_json_path`, `sleep_sec`, `relevant_doc_ids`）
 都集中在 `search_engine.py` 的 `_main()` 內，且附有詳細中文註解，直接修改即可。
