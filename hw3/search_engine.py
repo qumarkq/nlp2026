@@ -4,6 +4,7 @@ import json
 import math
 import re
 import time
+import argparse
 from collections import Counter, defaultdict, deque
 from dataclasses import dataclass, asdict
 from html import unescape
@@ -318,25 +319,39 @@ class CampusSearchEngine:
         return doc_id
 
 
-def _demo() -> None:
-    # Minimal local demo without network crawl.
-    engine = CampusSearchEngine()
-    engine.documents = {
-        "08021": Document("08021", "https://cs.cgu.edu.tw", "長庚大學資訊工程學系", 0.0, "長庚 資工 系所 介紹", ["00109", "01023"]),
-        "00109": Document("00109", "https://cs.cgu.edu.tw/news", "資訊工程學系 最新消息", 0.0, "資工 最新 消息 活動", ["08021"]),
-        "01023": Document("01023", "https://cs.cgu.edu.tw/faculty", "資訊工程學系 專任教師", 0.0, "資工 專任 教師 名單", ["08021"]),
-    }
-    engine.url_to_doc_id = {doc.url: doc.doc_id for doc in engine.documents.values()}
-    engine.graph_outgoing = {doc_id: set(doc.links) for doc_id, doc in engine.documents.items()}
+def _main() -> None:
+    parser = argparse.ArgumentParser(description="HW3 校網搜尋引擎測試入口")
+    parser.add_argument(
+        "--seeds",
+        nargs="+",
+        default=["https://www.cgu.edu.tw/", "https://cs.cgu.edu.tw/"],
+        help="起始爬蟲網址（可輸入多個）",
+    )
+    parser.add_argument("--max-docs", type=int, default=200, help="最大爬取文件數，正式可設 10000")
+    parser.add_argument("--query", type=str, default="長庚資工", help="測試查詢字串")
+    parser.add_argument("--top-k", type=int, default=10, help="輸出前 K 筆結果")
+    parser.add_argument("--output-json", type=str, default="hw3/cgu_pages.json", help="輸出 JSON 路徑")
+    parser.add_argument("--sleep-sec", type=float, default=0.05, help="每次請求間隔秒數")
+    args = parser.parse_args()
 
+    engine = CampusSearchEngine(allowed_domains=["cgu.edu.tw"])
+    print(f"[1/4] 開始爬蟲，目標 {args.max_docs} 筆...")
+    engine.crawl(seed_urls=args.seeds, max_docs=args.max_docs, sleep_sec=args.sleep_sec)
+    print(f"[完成] 已收集文件數: {len(engine.documents)}")
+
+    print("[2/4] 建立倒排索引...")
     engine.build_inverted_index()
-    engine.compute_pagerank()
-    engine.print_query_results("長庚資工")
+    print(f"[完成] 詞項數: {len(engine.inverted_index)}")
 
-    metrics = engine.evaluate_query("長庚資工", relevant_doc_ids={"08021", "00109"}, top_k=3)
-    print(f"Precision: {metrics['precision']:.2%}")
-    print(f"Recall: {metrics['recall']:.2%}")
+    print("[3/4] 計算 PageRank...")
+    engine.compute_pagerank()
+    print("[完成] PageRank 計算完成")
+
+    print("[4/4] 儲存 JSON + 執行查詢...")
+    engine.save_json(args.output_json)
+    print(f"[完成] JSON 已輸出到: {args.output_json}")
+    engine.print_query_results(args.query, top_k=args.top_k)
 
 
 if __name__ == "__main__":
-    _demo()
+    _main()

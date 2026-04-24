@@ -20,17 +20,22 @@ pip install requests beautifulsoup4 jieba
 
 > 本作業版本 **必須使用 jieba** 進行中文分詞，未安裝將無法執行。
 
-## 最小可執行範例
+## 直接測試（非 demo）
 
 ```bash
-python hw3/search_engine.py
+python hw3/search_engine.py \
+  --seeds https://www.cgu.edu.tw/ https://cs.cgu.edu.tw/ \
+  --max-docs 200 \
+  --query "長庚資工" \
+  --top-k 10
 ```
 
-會跑一個 3 篇文件的 demo，示範：
-- 建索引
+執行後會直接：
+- 爬校網頁面
+- 建立倒排索引
 - 計算 PageRank
-- 查詢「長庚資工」
-- 計算 precision / recall
+- 輸出 JSON
+- 立即查詢並印出結果
 
 ## 真實爬蟲範例
 
