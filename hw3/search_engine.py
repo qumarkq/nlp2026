@@ -254,6 +254,9 @@ class CampusSearchEngine:
             self.graph_outgoing[doc.doc_id] = set(doc.links)
             self.pagerank[doc.doc_id] = doc.pagerank
 
+        # Keep save/load workflow query-ready by restoring the inverted index.
+        self.build_inverted_index()
+
     # --------------------- Internal utils ---------------------
     def _safe_get(self, url: str) -> str:
         try:
