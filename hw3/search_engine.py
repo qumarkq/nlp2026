@@ -288,7 +288,18 @@ class CampusSearchEngine:
     def _extract_links(self, base_url: str, soup: BeautifulSoup) -> Set[str]:
         links: Set[str] = set()
         for a in soup.find_all("a", href=True):
-            href = a["href"].strip()
+            href_raw = a.get("href")
+            if isinstance(href_raw, list):
+                if not href_raw:
+                    continue
+                href = str(href_raw[0]).strip()
+            elif isinstance(href_raw, str):
+                href = href_raw.strip()
+            else:
+                continue
+
+            if not href:
+                continue
             if href.startswith(("mailto:", "javascript:", "tel:")):
                 continue
             full_url = self._normalize_url(urljoin(base_url, href))
