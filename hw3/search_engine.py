@@ -10,13 +10,9 @@ from html import unescape
 from typing import Dict, Iterable, List, Optional, Set, Tuple
 from urllib.parse import urldefrag, urljoin, urlparse
 
+import jieba  # type: ignore
 import requests
 from bs4 import BeautifulSoup
-
-try:
-    import jieba  # type: ignore
-except Exception:  # pragma: no cover - optional dependency
-    jieba = None
 
 
 @dataclass
@@ -123,21 +119,7 @@ class CampusSearchEngine:
 
     def tokenize(self, text: str) -> List[str]:
         text = unescape(text)
-        text = re.sub(r"\s+", " ", text)
-
-        if jieba is not None:
-            tokens = [t.strip() for t in jieba.lcut(text) if t.strip()]
-        else:
-            # Fallback tokenizer for CJK + English words
-            cjk_parts = re.findall(r"[\u4e00-\u9fff]+|[A-Za-z0-9_]+", text)
-            tokens: List[str] = []
-            for part in cjk_parts:
-                if re.match(r"[\u4e00-\u9fff]+", part):
-                    tokens.extend(list(part))
-                    if len(part) > 1:
-                        tokens.extend(part[i : i + 2] for i in range(len(part) - 1))
-                else:
-                    tokens.append(part.lower())
+        tokens = [t.strip() for t in jieba.lcut(text) if t.strip()]
         return tokens
 
     # --------------------- PageRank ---------------------

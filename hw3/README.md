@@ -18,7 +18,7 @@
 pip install requests beautifulsoup4 jieba
 ```
 
-> `jieba` 為可選；若未安裝，程式會使用內建 fallback tokenizer。
+> 本作業版本 **必須使用 jieba** 進行中文分詞，未安裝將無法執行。
 
 ## 最小可執行範例
 
