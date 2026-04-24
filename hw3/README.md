@@ -20,14 +20,10 @@ pip install requests beautifulsoup4 jieba
 
 > 本作業版本 **必須使用 jieba** 進行中文分詞，未安裝將無法執行。
 
-## 直接測試（非 demo）
+## 直接測試（在 Python 內改參數，不用 bash 傳參數）
 
 ```bash
-python hw3/search_engine.py \
-  --seeds https://www.cgu.edu.tw/ https://cs.cgu.edu.tw/ \
-  --max-docs 200 \
-  --query "長庚資工" \
-  --top-k 10
+python hw3/search_engine.py
 ```
 
 執行後會直接：
@@ -36,6 +32,10 @@ python hw3/search_engine.py \
 - 計算 PageRank
 - 輸出 JSON
 - 立即查詢並印出結果
+- （若在程式中的 `relevant_doc_ids` 填入標註集合）印出 Precision / Recall
+
+參數（`seed_urls`, `max_docs`, `query_text`, `top_k`, `output_json_path`, `sleep_sec`, `relevant_doc_ids`）
+都集中在 `search_engine.py` 的 `_main()` 內，且附有詳細中文註解，直接修改即可。
 
 ## 真實爬蟲範例
 
