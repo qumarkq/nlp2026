@@ -49,7 +49,7 @@ engine.crawl([
 ], max_docs=10000)
 engine.build_inverted_index()
 engine.compute_pagerank()
-engine.save_json("hw3/cgu_pages.json")
+engine.save_json("cgu_pages.json")
 
 engine.print_query_results("長庚資工", top_k=20)
 metrics = engine.evaluate_query("長庚資工", relevant_doc_ids={"00001", "00032"}, top_k=20)

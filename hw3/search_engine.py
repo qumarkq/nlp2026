@@ -5,6 +5,7 @@ import math
 import re
 import time
 import argparse
+from pathlib import Path
 from collections import Counter, defaultdict, deque
 from dataclasses import dataclass, asdict
 from html import unescape
@@ -215,8 +216,10 @@ class CampusSearchEngine:
 
     # --------------------- JSON IO ---------------------
     def save_json(self, output_path: str) -> None:
+        output = Path(output_path)
+        output.parent.mkdir(parents=True, exist_ok=True)
         payload = [asdict(doc) for doc in sorted(self.documents.values(), key=lambda d: d.doc_id)]
-        with open(output_path, "w", encoding="utf-8") as f:
+        with open(output, "w", encoding="utf-8") as f:
             json.dump(payload, f, ensure_ascii=False, indent=2)
 
     def load_json(self, input_path: str) -> None:
@@ -341,7 +344,7 @@ def _main() -> None:
     parser.add_argument("--max-docs", type=int, default=200, help="最大爬取文件數，正式可設 10000")
     parser.add_argument("--query", type=str, default="長庚資工", help="測試查詢字串")
     parser.add_argument("--top-k", type=int, default=10, help="輸出前 K 筆結果")
-    parser.add_argument("--output-json", type=str, default="hw3/cgu_pages.json", help="輸出 JSON 路徑")
+    parser.add_argument("--output-json", type=str, default="cgu_pages.json", help="輸出 JSON 路徑")
     parser.add_argument("--sleep-sec", type=float, default=0.05, help="每次請求間隔秒數")
     args = parser.parse_args()
 
